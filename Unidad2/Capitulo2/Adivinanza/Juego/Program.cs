@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Juego;
 
 namespace Juego
 {
-    internal class Program
+    public class Program
     {
-        public void Main()
+        public static void Main()
         {
-            throw new System.NotImplementedException();
+            Juego j = new Juego();
+            j.ComenzarJuego();
+
         }
     }
 }

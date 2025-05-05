@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Juego
 {
-    internal class Jugada
+    public class Jugada
     {
         private bool _adivino;
         private int _intentos;
@@ -16,6 +16,7 @@ namespace Juego
         {
             Random rnd = new Random();
             Numero = rnd.Next(maxNumero);
+            _intentos = 1;
         }
 
         public bool Adivino
@@ -55,6 +56,7 @@ namespace Juego
         public void Comparar(int val)
         {
             _adivino = (val == this.Numero);
+            if (!_adivino) { _intentos += 1; }
         }
     }
 }

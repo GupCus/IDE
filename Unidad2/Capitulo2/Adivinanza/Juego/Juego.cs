@@ -6,31 +6,75 @@
 
         public Juego()
         {
+            _record = 999;
         }
 
         public void ComenzarJuego()
         {
-            throw new System.NotImplementedException();
+
+            do
+            {
+                Console.Clear();
+                Console.WriteLine("Comenzó el Juego \nIngrese un numero máximo y adivina cual toca");
+                Console.WriteLine("Record Actual: " + _record);
+
+                int max = this.PreguntarMaximo();
+                Jugada j = new Jugada(max);
+
+                do
+                {
+                    Console.Clear();
+                    Console.WriteLine("Comenzó el Juego, el máximo es: " + max);
+                    Console.WriteLine("Este es su intento n: " + j.Intento + " Record Actual: " + _record);
+
+
+                    j.Comparar(this.PreguntarNumero());
+                    if (j.Adivino)
+                    {
+                        this.CompararRecord(j.Intento);
+                        Console.WriteLine("\n Muy bien!! adivinaste!!. Intentos: " +j.Intento + " Record Actual: " + _record);
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nTe equivocaste!, seguí intentando");
+                    }
+                } while (this.Continuar() && !(j.Adivino));
+                Console.Clear();
+                Console.WriteLine( "Record Actual: " + _record);
+                Console.WriteLine("Deseas jugar de vuelta? \nVamos a sacar un nuevo record!!");
+           
+            } while (this.Continuar());
+    
         }
 
-        public void CompararRecord()
+        public void CompararRecord(int actual)
         {
-            throw new System.NotImplementedException();
+            if(_record > actual)
+            {
+                _record = actual;
+            }
         }
 
-        public void Continuar()
+        public bool Continuar()
         {
-            throw new System.NotImplementedException();
+            Console.WriteLine("\n\nPresione cualquier tecla para continuar, presione ESCAPE para salir");
+            ConsoleKeyInfo cont = Console.ReadKey();
+            return cont.Key != ConsoleKey.Escape;
         }
 
-        public void PreguntarMaximo()
+        public int PreguntarMaximo()
         {
-            throw new System.NotImplementedException();
+            Console.Write("Numero: ");
+            int opcion = int.Parse(Console.ReadLine());
+            Console.WriteLine("");
+            return opcion; 
         }
 
-        public void PreguntarNumero()
+        public int PreguntarNumero()
         {
-            throw new System.NotImplementedException();
+            Console.Write("Cual número tocó???: ");
+            int adivinar = int.Parse(Console.ReadLine());
+            return adivinar;
         }
     }
 }
