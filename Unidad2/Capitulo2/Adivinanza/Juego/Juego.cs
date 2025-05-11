@@ -2,11 +2,11 @@
 {
     public class Juego
     {
-        private int _record;
+        private int? _record;
 
         public Juego()
         {
-            _record = 999;
+            _record = null;
         }
 
         public void ComenzarJuego()
@@ -19,7 +19,7 @@
                 Console.WriteLine("Record Actual: " + _record);
 
                 int max = this.PreguntarMaximo();
-                Jugada j = new Jugada(max);
+                JugadaConAyuda j = new JugadaConAyuda(max);
 
                 do
                 {
@@ -49,7 +49,7 @@
 
         public void CompararRecord(int actual)
         {
-            if(_record > actual)
+            if((_record ==  null) || (_record > actual))
             {
                 _record = actual;
             }

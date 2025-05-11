@@ -8,9 +8,9 @@ namespace Juego
 {
     public class Jugada
     {
-        private bool _adivino;
-        private int _intentos;
-        private int _numero;
+        protected bool _adivino;
+        protected int _intentos;
+        protected int _numero;
 
         public Jugada(int maxNumero)
         {
