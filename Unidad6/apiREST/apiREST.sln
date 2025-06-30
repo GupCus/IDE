@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35931.197 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "apiREST", "apiREST\apiREST.csproj", "{FEFC1D8D-ADA0-41DA-A402-0CD0DA27C00D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Universidad", "Universidad\Universidad.csproj", "{38394295-5D7D-4E98-ACE0-7BD0513FB907}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FEFC1D8D-ADA0-41DA-A402-0CD0DA27C00D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEFC1D8D-ADA0-41DA-A402-0CD0DA27C00D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEFC1D8D-ADA0-41DA-A402-0CD0DA27C00D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEFC1D8D-ADA0-41DA-A402-0CD0DA27C00D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38394295-5D7D-4E98-ACE0-7BD0513FB907}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38394295-5D7D-4E98-ACE0-7BD0513FB907}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38394295-5D7D-4E98-ACE0-7BD0513FB907}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38394295-5D7D-4E98-ACE0-7BD0513FB907}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5B27346D-ACEC-438E-B0B1-BA7844618CEE}
+	EndGlobalSection
+EndGlobal
