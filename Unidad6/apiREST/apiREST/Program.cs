@@ -14,7 +14,7 @@ namespace apiREST
 
             var app = builder.Build();
             app.UseSwagger();
-            //app.UseSwaggerUI();
+            app.UseSwaggerUI();
 
             app.MapGet("/", () =>
             Results.Redirect("/swagger/"));
