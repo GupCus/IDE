@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MAUI.Views.ClienteDetallePage"
+             Title="{Binding PageTitle}">
+    
+    <ScrollView Padding="20">
+        <StackLayout Spacing="15">
+            
+            <!-- Id (solo visible en modo edición) -->
+            <StackLayout IsVisible="{Binding IsEditMode}">
+                <Label Text="Id:" FontAttributes="Bold"/>
+                <Entry Text="{Binding Cliente.Id}" IsReadOnly="True" BackgroundColor="LightGray"/>
+            </StackLayout>
+            
+            <!-- Nombre -->
+            <StackLayout>
+                <Label Text="Nombre:" FontAttributes="Bold"/>
+                <Entry Text="{Binding Cliente.Nombre}" Placeholder="Ingrese el nombre"/>
+                <Label Text="{Binding ErrorMessages[Nombre]}" 
+                       TextColor="Red" 
+                       FontSize="12"
+                       IsVisible="{Binding HasError[Nombre]}"/>
+            </StackLayout>
+            
+            <!-- Apellido -->
+            <StackLayout>
+                <Label Text="Apellido:" FontAttributes="Bold"/>
+                <Entry Text="{Binding Cliente.Apellido}" Placeholder="Ingrese el apellido"/>
+                <Label Text="{Binding ErrorMessages[Apellido]}" 
+                       TextColor="Red" 
+                       FontSize="12"
+                       IsVisible="{Binding HasError[Apellido]}"/>
+            </StackLayout>
+            
+            <!-- Email -->
+            <StackLayout>
+                <Label Text="Email:" FontAttributes="Bold"/>
+                <Entry Text="{Binding Cliente.Email}" 
+                       Placeholder="Ingrese el email"
+                       Keyboard="Email"/>
+                <Label Text="{Binding ErrorMessages[Email]}" 
+                       TextColor="Red" 
+                       FontSize="12"
+                       IsVisible="{Binding HasError[Email]}"/>
+            </StackLayout>
+            
+            <!-- País -->
+            <StackLayout>
+                <Picker ItemsSource="{Binding Paises}" 
+                        SelectedItem="{Binding SelectedPais}"
+                        ItemDisplayBinding="{Binding Nombre}"
+                        Title="Seleccionar País"/>
+                <Label Text="{Binding ErrorMessages[Pais]}" 
+                       TextColor="Red" 
+                       FontSize="12"
+                       IsVisible="{Binding HasError[Pais]}"/>
+            </StackLayout>
+            
+            <!-- Fecha Alta (solo visible en modo edición) -->
+            <StackLayout IsVisible="{Binding IsEditMode}">
+                <Label Text="Fecha Alta:" FontAttributes="Bold"/>
+                <Entry Text="{Binding Cliente.FechaAlta, StringFormat='{0:dd/MM/yyyy HH:mm:ss}'}" 
+                       IsReadOnly="True" 
+                       BackgroundColor="LightGray"/>
+            </StackLayout>
+            
+            <!-- Mensaje de éxito -->
+            <Label Text="{Binding SuccessMessage}" 
+                   TextColor="Green" 
+                   FontSize="14"
+                   IsVisible="{Binding HasSuccessMessage}"
+                   HorizontalOptions="Center"/>
+            
+            <!-- Botones -->
+            <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="20" Margin="0,20,0,0">
+                <Button Text="Aceptar" 
+                        Command="{Binding AceptarCommand}"
+                        BackgroundColor="Green" 
+                        TextColor="White"
+                        MinimumWidthRequest="100"/>
+                <Button Text="Cancelar" 
+                        Command="{Binding CancelarCommand}"
+                        BackgroundColor="Gray" 
+                        TextColor="White"
+                        MinimumWidthRequest="100"/>
+            </StackLayout>
+            
+            <!-- Loading indicator -->
+            <ActivityIndicator IsVisible="{Binding IsLoading}" 
+                              IsRunning="{Binding IsLoading}"
+                              Color="DodgerBlue"/>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

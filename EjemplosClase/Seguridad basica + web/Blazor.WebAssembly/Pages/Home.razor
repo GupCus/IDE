@@ -1,0 +1,35 @@
+﻿@page "/"
+@using API.Clients
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
+
+<PageTitle>Home</PageTitle>
+
+@if (isLoading)
+{
+    <p>Verificando autenticación...</p>
+}
+else if (isAuthenticated)
+{
+    <p>Usuario: @username</p>
+}
+
+@code {
+    private bool isAuthenticated = false;
+    private bool isLoading = true;
+    private string username = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        isAuthenticated = await AuthService.IsAuthenticatedAsync();
+        username = isAuthenticated ? await AuthService.GetUsernameAsync() ?? "" : "";
+        
+        if (!isAuthenticated)
+        {
+            Navigation.NavigateTo("/login");
+            return;
+        }
+
+        isLoading = false;
+    }
+}
