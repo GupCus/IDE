@@ -1,0 +1,194 @@
+﻿@page "/alumnos"
+@page "/alumnos/{AlumnoId:int}"
+@attribute [StreamRendering]
+@using Lab01.Components.Clases
+@using Microsoft.EntityFrameworkCore
+
+<!-- Alta de Alumno -->
+@if (alum == null)
+{
+    <h3>Añadir alumno</h3>
+    <br />
+    <EditForm Model="alumnuevo" OnValidSubmit="CrearAlumno" FormName="alumnuevo">
+        <DataAnnotationsValidator />
+        
+        
+        <div>
+            <div>
+                <label for="Nombre">Nombre:</label>
+                <InputText id="Nombre" class="form-control" @bind-Value="alumnuevo.Nombre" />
+            </div>
+            <div>
+                <label for="Apellido">Apellido:</label>
+                <InputText id="Apellido" class="form-control" @bind-Value="alumnuevo.Apellido" />
+            </div>
+            <div>
+                <label for="Legajo">Legajo:</label>
+                <InputNumber id="Legajo" class="form-control" @bind-Value="alumnuevo.Legajo" />
+            </div>
+            <div>
+                <label for="Direccion">Direccion:</label>
+                <InputText id="Direccion" class="form-control" @bind-Value="alumnuevo.Direccion" />
+            </div>
+            
+        </div>
+        <br />
+        <ValidationSummary />
+        <button type="submit" class="btn btn-success">Añadir</button>
+        
+    </EditForm>
+    <hr />
+    <br />
+}
+else if(alum != null)
+{
+<!-- Detalle de Alumno -->
+    <h3>
+        Detalle alumno id: @(alum.Id)
+        <a class="btn btn-outline-danger" @onclick="() => alum = null" href="/alumnos">🗙</a>
+    </h3>
+    <br />
+    <EditForm Model="alum" OnValidSubmit="ActualizarAlumno" FormName="editalumno">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div>
+            <label>
+                Nombre:
+                <InputText @bind-Value="alum.Nombre" />
+                Apellido:
+                <InputText @bind-Value="alum.Apellido" />
+                Legajo:
+                <InputNumber @bind-Value="alum.Legajo" />
+                Direccion:
+                <InputText @bind-Value="alum.Direccion" />
+                <button type="submit" class="btn btn-success">Actualizar</button>
+            </label>
+        </div>
+    </EditForm>
+    <hr />
+    <br />
+} 
+else
+{
+    <p><em>Cargando...</em></p>
+}
+
+<!-- Tabla de Alumnos -->
+<h3>Alumnos</h3>
+@if (alumnos != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Legajo</th>
+                <th>Direccion</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var alumno in alumnos)
+            {
+                <tr>
+                    <td>@alumno.Nombre</td>
+                    <td>@alumno.Apellido</td>
+                    <td>@alumno.Legajo</td>
+                    <td>@alumno.Direccion</td>
+                    <td>
+                        <a class="btn btn-dark" href="@($"/alumnos/{alumno.Id}")">Ver más</a>
+                        <button type="button" class="btn btn-danger" @onclick="() => EliminarAlumno(alumno.Id)">Eliminar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p><em>Cargando...</em></p>
+}
+
+@code {
+    [Parameter]
+    public int? AlumnoId { get; set; }
+    private Alumno alumnuevo { get; set; } = new() { Nombre = "", Apellido = "", Legajo = 0, Direccion = "" };
+
+    private Alumno? alum;
+    private Alumno[]? alumnos;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await CargarDatos();
+    }
+
+    private async Task CargarDatos()
+    {
+        if (AlumnoId != null)
+        {
+            using (UniversidadContext bd = new())
+            {
+                alum = await bd.Alumnos.FindAsync(AlumnoId);
+            }
+        }
+
+        using (UniversidadContext bd2 = new())
+        {
+            alumnos = await bd2.Alumnos.ToArrayAsync();
+        }
+    }
+
+    private async Task ActualizarAlumno()
+    {
+        if (alum != null) 
+        {
+            using (UniversidadContext bd = new())
+            {
+                var alumnomodif = await bd.Alumnos.FindAsync(alum.Id);
+                if (alumnomodif != null)
+                {
+                    alumnomodif.Nombre = alum.Nombre;
+                    alumnomodif.Apellido = alum.Apellido;
+                    alumnomodif.Legajo = alum.Legajo;
+                    alumnomodif.Direccion = alum.Direccion;
+                    await bd.SaveChangesAsync();
+                }
+            }
+            await CargarDatos();
+        }
+    }
+
+    private async Task CrearAlumno()
+    {
+        using (UniversidadContext bd = new())
+        {
+            await bd.Alumnos.AddAsync(new Alumno
+            {
+                Nombre = alumnuevo.Nombre,
+                Apellido = alumnuevo.Apellido,
+                Legajo = alumnuevo.Legajo,
+                Direccion = alumnuevo.Direccion
+            });
+            await bd.SaveChangesAsync();
+        }
+        await CargarDatos();
+        alumnuevo = new() { Nombre = "", Apellido = "", Legajo = 0, Direccion = "" };
+    }
+
+    private async Task EliminarAlumno(int? id)
+    {
+        if (id != null)
+        {
+            using (UniversidadContext bd = new())
+            {
+                var alumno = await bd.Alumnos.FindAsync(id);
+                if (alumno != null)
+                {
+                    bd.Alumnos.Remove(alumno);
+                    await bd.SaveChangesAsync();
+                }
+            }
+            await CargarDatos();
+        }
+    }
+}
