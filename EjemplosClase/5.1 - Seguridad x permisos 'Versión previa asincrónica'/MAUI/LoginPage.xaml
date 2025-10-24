@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="MAUI.LoginPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="Iniciar Sesión">
+    <ScrollView>
+        <VerticalStackLayout Spacing="25" Padding="30,0" VerticalOptions="Center">
+            
+            <Label 
+                Text="Iniciar Sesión"
+                FontSize="32"
+                HorizontalOptions="Center" 
+                TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
+
+            <Entry x:Name="UsernameEntry"
+                   Placeholder="Usuario"
+                   Text="{Binding Username}" />
+
+            <Entry x:Name="PasswordEntry"
+                   Placeholder="Contraseña"
+                   IsPassword="True"
+                   Text="{Binding Password}" />
+
+            <Button x:Name="LoginBtn"
+                    Text="Iniciar Sesión"
+                    Command="{Binding LoginCommand}"
+                    HorizontalOptions="Center" />
+
+            <Label x:Name="ErrorLabel"
+                   Text="{Binding ErrorMessage}"
+                   TextColor="Red"
+                   HorizontalOptions="Center"
+                   IsVisible="{Binding HasError}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

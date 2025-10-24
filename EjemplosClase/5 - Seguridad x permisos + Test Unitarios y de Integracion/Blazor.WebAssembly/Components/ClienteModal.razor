@@ -1,0 +1,260 @@
+@using DTOs
+@using API.Clients
+@using System.Text.RegularExpressions
+@inject IJSRuntime JSRuntime
+
+@if (showModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        @if (mode == FormMode.Add)
+                        {
+                            <text>Agregar</text>
+                        }
+                        else
+                        {
+                            <text>Editar</text>
+                        }
+                    </h5>
+                    <button type="button" class="btn-close" @onclick="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="currentCliente" OnValidSubmit="HandleValidSubmit">
+                        <DataAnnotationsValidator />
+                        
+                        @if (mode == FormMode.Update)
+                        {
+                            <div class="mb-3">
+                                <label class="form-label">Id</label>
+                                <input type="text" class="form-control" value="@currentCliente.Id" readonly />
+                            </div>
+                        }
+
+                        <div class="mb-3">
+                            <label class="form-label">Nombre *</label>
+                            <InputText @bind-Value="currentCliente.Nombre" class="form-control" />
+                            @if (validationErrors.ContainsKey("Nombre"))
+                            {
+                                <div class="text-danger small">@validationErrors["Nombre"]</div>
+                            }
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Apellido *</label>
+                            <InputText @bind-Value="currentCliente.Apellido" class="form-control" />
+                            @if (validationErrors.ContainsKey("Apellido"))
+                            {
+                                <div class="text-danger small">@validationErrors["Apellido"]</div>
+                            }
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Email *</label>
+                            <InputText @bind-Value="currentCliente.Email" class="form-control" />
+                            @if (validationErrors.ContainsKey("Email"))
+                            {
+                                <div class="text-danger small">@validationErrors["Email"]</div>
+                            }
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">País *</label>
+                            <InputSelect @bind-Value="currentCliente.PaisId" class="form-select">
+                                <option value="0">Seleccionar País</option>
+                                @if (paises != null)
+                                {
+                                    @foreach (var pais in paises)
+                                    {
+                                        <option value="@pais.Id">@pais.Nombre</option>
+                                    }
+                                }
+                            </InputSelect>
+                            @if (validationErrors.ContainsKey("Pais"))
+                            {
+                                <div class="text-danger small">@validationErrors["Pais"]</div>
+                            }
+                        </div>
+
+                        @if (mode == FormMode.Update)
+                        {
+                            <div class="mb-3">
+                                <label class="form-label">Fecha Alta</label>
+                                <input type="text" class="form-control" value="@currentCliente.FechaAlta.ToString("dd/MM/yyyy HH:mm")" readonly />
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            <div class="alert alert-danger">
+                                @errorMessage
+                            </div>
+                        }
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" @onclick="Close">Cancelar</button>
+                            <button type="submit" class="btn btn-primary" disabled="@saving">
+                                @if (saving)
+                                {
+                                    <span class="spinner-border spinner-border-sm me-2"></span>
+                                }
+                                @(mode == FormMode.Add ? "Agregar" : "Actualizar")
+                            </button>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public EventCallback OnClienteChanged { get; set; }
+    
+    private bool showModal = false;
+    private FormMode mode = FormMode.Add;
+    private ClienteDTO currentCliente = new ClienteDTO();
+    private bool saving = false;
+    private string errorMessage = string.Empty;
+    private Dictionary<string, string> validationErrors = new Dictionary<string, string>();
+    private List<PaisDTO>? paises;
+
+    public enum FormMode
+    {
+        Add,
+        Update
+    }
+
+    public async Task ShowAddModal()
+    {
+        mode = FormMode.Add;
+        currentCliente = new ClienteDTO();
+        await LoadPaises();
+        ClearValidationErrors();
+        showModal = true;
+        StateHasChanged();
+    }
+
+    public async Task ShowEditModal(ClienteDTO cliente)
+    {
+        mode = FormMode.Update;
+        currentCliente = new ClienteDTO
+        {
+            Id = cliente.Id,
+            Nombre = cliente.Nombre,
+            Apellido = cliente.Apellido,
+            Email = cliente.Email,
+            PaisId = cliente.PaisId,
+            PaisNombre = cliente.PaisNombre,
+            FechaAlta = cliente.FechaAlta
+        };
+        await LoadPaises();
+        ClearValidationErrors();
+        showModal = true;
+        StateHasChanged();
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (!ValidateCliente())
+            return;
+
+        try
+        {
+            saving = true;
+            errorMessage = string.Empty;
+
+            if (mode == FormMode.Add)
+            {
+                await ClienteApiClient.AddAsync(currentCliente);
+            }
+            else
+            {
+                await ClienteApiClient.UpdateAsync(currentCliente);
+            }
+
+            await OnClienteChanged.InvokeAsync();
+            Close();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+        finally
+        {
+            saving = false;
+        }
+    }
+
+    private bool ValidateCliente()
+    {
+        ClearValidationErrors();
+        bool isValid = true;
+
+        if (string.IsNullOrWhiteSpace(currentCliente.Nombre))
+        {
+            validationErrors["Nombre"] = "El Nombre es requerido";
+            isValid = false;
+        }
+
+        if (string.IsNullOrWhiteSpace(currentCliente.Apellido))
+        {
+            validationErrors["Apellido"] = "El Apellido es requerido";
+            isValid = false;
+        }
+
+        if (string.IsNullOrWhiteSpace(currentCliente.Email))
+        {
+            validationErrors["Email"] = "El Email es requerido";
+            isValid = false;
+        }
+        else if (!IsValidEmail(currentCliente.Email))
+        {
+            validationErrors["Email"] = "El formato del Email no es válido";
+            isValid = false;
+        }
+
+        if (currentCliente.PaisId <= 0)
+        {
+            validationErrors["Pais"] = "Debe seleccionar un país";
+            isValid = false;
+        }
+
+        StateHasChanged();
+        return isValid;
+    }
+
+    private bool IsValidEmail(string email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+            return false;
+        return Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+    }
+
+    private void ClearValidationErrors()
+    {
+        validationErrors.Clear();
+        errorMessage = string.Empty;
+    }
+
+    private async Task LoadPaises()
+    {
+        try
+        {
+            paises = (await PaisApiClient.GetAllAsync())?.ToList();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error al cargar países: {ex.Message}";
+        }
+    }
+
+    private void Close()
+    {
+        showModal = false;
+        ClearValidationErrors();
+        StateHasChanged();
+    }
+}

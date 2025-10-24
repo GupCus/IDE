@@ -1,0 +1,200 @@
+@page "/clientes"
+@using DTOs
+@using API.Clients
+@using Blazor.WebAssembly.Components
+@inject IJSRuntime JSRuntime
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
+
+<PageTitle>Clientes</PageTitle>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h3>Clientes</h3>
+            
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @errorMessage
+                    <button type="button" class="btn-close" @onclick="() => errorMessage = string.Empty"></button>
+                </div>
+            }
+            
+            @if (!string.IsNullOrEmpty(successMessage))
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @successMessage
+                    <button type="button" class="btn-close" @onclick="() => successMessage = string.Empty"></button>
+                </div>
+            }
+
+            @if (canAdd)
+            {
+                <div class="mb-3">
+                    <button class="btn btn-primary" @onclick="OpenAddModal">
+                        <i class="fas fa-plus"></i> Agregar
+                    </button>
+                </div>
+            }
+
+            @if (loading)
+            {
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Id</th>
+                                <th>Nombre</th>
+                                <th>Apellido</th>
+                                <th>Email</th>
+                                <th>País</th>
+                                <th>Fecha Alta</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (clientes != null && clientes.Any())
+                            {
+                                @foreach (var cliente in clientes)
+                                {
+                                    <tr>
+                                        <td>@cliente.Id</td>
+                                        <td>@cliente.Nombre</td>
+                                        <td>@cliente.Apellido</td>
+                                        <td>@cliente.Email</td>
+                                        <td>@cliente.PaisNombre</td>
+                                        <td>@cliente.FechaAlta.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                                        <td>
+                                            @if (canUpdate)
+                                            {
+                                                <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => OpenEditModal(cliente)">
+                                                    <i class="fas fa-edit"></i> Editar
+                                                </button>
+                                            }
+                                            @if (canDelete)
+                                            {
+                                                <button class="btn btn-sm btn-outline-danger" @onclick="() => ConfirmDelete(cliente)">
+                                                    <i class="fas fa-trash"></i> Eliminar
+                                                </button>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<ClienteModal @ref="clienteModal" OnClienteChanged="LoadClientes" />
+
+@code {
+    private List<ClienteDTO>? clientes;
+    private bool loading = true;
+    private string errorMessage = string.Empty;
+    private string successMessage = string.Empty;
+    private ClienteModal clienteModal = null!;
+    
+    // Permisos de autorización
+    private bool canRead = false;
+    private bool canAdd = false;
+    private bool canUpdate = false;
+    private bool canDelete = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var isAuthenticated = await AuthService.IsAuthenticatedAsync();
+        if (!isAuthenticated)
+        {
+            Navigation.NavigateTo("/login");
+            return;
+        }
+
+        // Verificar permisos
+        await LoadPermissions();
+        
+        // Solo cargar datos si tiene permiso de lectura
+        if (canRead)
+        {
+            await LoadClientes();
+        }
+        else
+        {
+            errorMessage = "No tiene permisos para ver clientes.";
+            loading = false;
+        }
+    }
+
+    private async Task LoadPermissions()
+    {
+        canRead = await AuthService.HasPermissionAsync("clientes.leer");
+        canAdd = await AuthService.HasPermissionAsync("clientes.agregar");
+        canUpdate = await AuthService.HasPermissionAsync("clientes.actualizar");
+        canDelete = await AuthService.HasPermissionAsync("clientes.eliminar");
+    }
+
+    private async Task LoadClientes()
+    {
+        try
+        {
+            loading = true;
+            clientes = (await ClienteApiClient.GetAllAsync())?.ToList();
+            successMessage = string.Empty; // Clear success message when reloading
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error al cargar clientes: {ex.Message}";
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    private async Task OpenAddModal()
+    {
+        await clienteModal.ShowAddModal();
+    }
+
+    private async Task OpenEditModal(ClienteDTO cliente)
+    {
+        await clienteModal.ShowEditModal(cliente);
+    }
+
+    private async Task ConfirmDelete(ClienteDTO cliente)
+    {
+        var confirm = await JSRuntime.InvokeAsync<bool>("confirm", 
+            $"¿Está seguro que desea eliminar el cliente {cliente.Nombre} {cliente.Apellido} ({cliente.Email})?");
+        
+        if (confirm)
+        {
+            await DeleteCliente(cliente.Id);
+        }
+    }
+
+    private async Task DeleteCliente(int id)
+    {
+        try
+        {
+            await ClienteApiClient.DeleteAsync(id);
+            successMessage = "Cliente eliminado exitosamente.";
+            await LoadClientes();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error al eliminar cliente: {ex.Message}";
+        }
+    }
+}

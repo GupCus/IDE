@@ -1,0 +1,77 @@
+@using API.Clients
+@inject IAuthService AuthService
+@implements IDisposable
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">Blazor Server</a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+        @if (canReadClientes)
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="clientes">
+                    <span class="oi oi-people" aria-hidden="true"></span> Clientes
+                </NavLink>
+            </div>
+        }
+    </nav>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+    private bool canReadClientes = false;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Suscribirse a cambios de autenticación
+        AuthService.AuthenticationStateChanged += OnAuthenticationStateChanged;
+        await CheckPermissions();
+        await base.OnInitializedAsync();
+    }
+
+    private async Task CheckPermissions()
+    {
+        var isAuthenticated = await AuthService.IsAuthenticatedAsync();
+        if (isAuthenticated)
+        {
+            canReadClientes = await AuthService.HasPermissionAsync("clientes.leer");
+        }
+        else
+        {
+            canReadClientes = false;
+        }
+        StateHasChanged(); // Forzar re-render
+    }
+
+    private void OnAuthenticationStateChanged(bool authenticated)
+    {
+        InvokeAsync(async () =>
+        {
+            await CheckPermissions();
+        });
+    }
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+    public void Dispose()
+    {
+        AuthService.AuthenticationStateChanged -= OnAuthenticationStateChanged;
+    }
+}
