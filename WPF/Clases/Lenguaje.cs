@@ -7,7 +7,7 @@ namespace Clases
     public class Lenguaje
     {
         public string Nombre { get; set; }
-        List<Snippet?> Snippets { get; set; } = new();
+        public List<Snippet?> Snippets { get; set; } = new();
 
         public Lenguaje() 
         {
