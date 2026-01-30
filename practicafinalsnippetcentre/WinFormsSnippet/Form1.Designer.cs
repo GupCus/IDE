@@ -36,10 +36,10 @@
             btnNvaCategoria = new Button();
             tableLayoutPanel3 = new TableLayoutPanel();
             flowSnippets = new FlowLayoutPanel();
+            labelSinSeleccion = new Label();
             tableLayoutPanel1 = new TableLayoutPanel();
             buttonNvoSnippet = new Button();
             labelLenguaje = new Label();
-            labelSinSeleccion = new Label();
             tableLayoutPanelPrincipal.SuspendLayout();
             tableLayoutPanelIzq.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
@@ -56,11 +56,10 @@
             tableLayoutPanelPrincipal.Controls.Add(tableLayoutPanel3, 1, 0);
             tableLayoutPanelPrincipal.Dock = DockStyle.Fill;
             tableLayoutPanelPrincipal.Location = new Point(0, 0);
-            tableLayoutPanelPrincipal.Margin = new Padding(3, 2, 3, 2);
             tableLayoutPanelPrincipal.Name = "tableLayoutPanelPrincipal";
             tableLayoutPanelPrincipal.RowStyles.Add(new RowStyle());
-            tableLayoutPanelPrincipal.RowStyles.Add(new RowStyle(SizeType.Absolute, 15F));
-            tableLayoutPanelPrincipal.Size = new Size(906, 595);
+            tableLayoutPanelPrincipal.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanelPrincipal.Size = new Size(1035, 793);
             tableLayoutPanelPrincipal.TabIndex = 0;
             // 
             // tableLayoutPanelIzq
@@ -71,24 +70,22 @@
             tableLayoutPanelIzq.Controls.Add(pictureBox1, 0, 0);
             tableLayoutPanelIzq.Controls.Add(btnNvaCategoria, 0, 2);
             tableLayoutPanelIzq.Dock = DockStyle.Fill;
-            tableLayoutPanelIzq.Location = new Point(3, 2);
-            tableLayoutPanelIzq.Margin = new Padding(3, 2, 3, 2);
+            tableLayoutPanelIzq.Location = new Point(3, 3);
             tableLayoutPanelIzq.Name = "tableLayoutPanelIzq";
             tableLayoutPanelIzq.RowCount = 3;
             tableLayoutPanelIzq.RowStyles.Add(new RowStyle());
             tableLayoutPanelIzq.RowStyles.Add(new RowStyle(SizeType.Percent, 90F));
             tableLayoutPanelIzq.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
-            tableLayoutPanelIzq.Size = new Size(252, 591);
+            tableLayoutPanelIzq.Size = new Size(289, 788);
             tableLayoutPanelIzq.TabIndex = 0;
             // 
             // panellenguajes
             // 
             panellenguajes.BackColor = Color.FromArgb(30, 30, 30);
             panellenguajes.Dock = DockStyle.Fill;
-            panellenguajes.Location = new Point(3, 52);
-            panellenguajes.Margin = new Padding(3, 2, 3, 2);
+            panellenguajes.Location = new Point(3, 70);
             panellenguajes.Name = "panellenguajes";
-            panellenguajes.Size = new Size(246, 482);
+            panellenguajes.Size = new Size(283, 642);
             panellenguajes.TabIndex = 0;
             // 
             // pictureBox1
@@ -96,10 +93,9 @@
             pictureBox1.BackColor = Color.FromArgb(30, 30, 30);
             pictureBox1.Dock = DockStyle.Fill;
             pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
-            pictureBox1.Location = new Point(3, 2);
-            pictureBox1.Margin = new Padding(3, 2, 3, 2);
+            pictureBox1.Location = new Point(3, 3);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(246, 46);
+            pictureBox1.Size = new Size(283, 61);
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox1.TabIndex = 2;
             pictureBox1.TabStop = false;
@@ -113,10 +109,9 @@
             btnNvaCategoria.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 100, 180);
             btnNvaCategoria.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 122, 204);
             btnNvaCategoria.FlatStyle = FlatStyle.Flat;
-            btnNvaCategoria.Location = new Point(3, 538);
-            btnNvaCategoria.Margin = new Padding(3, 2, 3, 2);
+            btnNvaCategoria.Location = new Point(3, 718);
             btnNvaCategoria.Name = "btnNvaCategoria";
-            btnNvaCategoria.Size = new Size(246, 51);
+            btnNvaCategoria.Size = new Size(283, 67);
             btnNvaCategoria.TabIndex = 0;
             btnNvaCategoria.Text = "Nueva Categoría";
             btnNvaCategoria.UseVisualStyleBackColor = false;
@@ -128,25 +123,37 @@
             tableLayoutPanel3.Controls.Add(flowSnippets, 0, 1);
             tableLayoutPanel3.Controls.Add(tableLayoutPanel1, 0, 0);
             tableLayoutPanel3.Dock = DockStyle.Fill;
-            tableLayoutPanel3.Location = new Point(261, 2);
-            tableLayoutPanel3.Margin = new Padding(3, 2, 3, 2);
+            tableLayoutPanel3.Location = new Point(298, 3);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
             tableLayoutPanel3.RowCount = 2;
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 15F));
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 85F));
-            tableLayoutPanel3.Size = new Size(642, 591);
+            tableLayoutPanel3.Size = new Size(734, 788);
             tableLayoutPanel3.TabIndex = 1;
             // 
             // flowSnippets
             // 
+            flowSnippets.AutoScroll = true;
             flowSnippets.Controls.Add(labelSinSeleccion);
             flowSnippets.Dock = DockStyle.Fill;
             flowSnippets.Font = new Font("Consolas", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            flowSnippets.Location = new Point(3, 90);
-            flowSnippets.Margin = new Padding(3, 2, 3, 2);
+            flowSnippets.Location = new Point(3, 121);
             flowSnippets.Name = "flowSnippets";
-            flowSnippets.Size = new Size(636, 499);
+            flowSnippets.Size = new Size(728, 664);
             flowSnippets.TabIndex = 1;
+            // 
+            // labelSinSeleccion
+            // 
+            labelSinSeleccion.Anchor = AnchorStyles.None;
+            labelSinSeleccion.AutoSize = true;
+            labelSinSeleccion.Font = new Font("Segoe UI", 30F, FontStyle.Italic);
+            labelSinSeleccion.ForeColor = Color.DimGray;
+            labelSinSeleccion.Location = new Point(183, 160);
+            labelSinSeleccion.Margin = new Padding(183, 160, 137, 160);
+            labelSinSeleccion.Name = "labelSinSeleccion";
+            labelSinSeleccion.Size = new Size(404, 134);
+            labelSinSeleccion.TabIndex = 0;
+            labelSinSeleccion.Text = "No hay lenguajes seleccionados...";
             // 
             // tableLayoutPanel1
             // 
@@ -156,12 +163,11 @@
             tableLayoutPanel1.Controls.Add(buttonNvoSnippet, 1, 0);
             tableLayoutPanel1.Controls.Add(labelLenguaje, 0, 0);
             tableLayoutPanel1.Dock = DockStyle.Fill;
-            tableLayoutPanel1.Location = new Point(3, 2);
-            tableLayoutPanel1.Margin = new Padding(3, 2, 3, 2);
+            tableLayoutPanel1.Location = new Point(3, 3);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Size = new Size(636, 84);
+            tableLayoutPanel1.Size = new Size(728, 112);
             tableLayoutPanel1.TabIndex = 2;
             // 
             // buttonNvoSnippet
@@ -173,10 +179,10 @@
             buttonNvoSnippet.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 100, 180);
             buttonNvoSnippet.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 122, 204);
             buttonNvoSnippet.FlatStyle = FlatStyle.Flat;
-            buttonNvoSnippet.Location = new Point(498, 8);
-            buttonNvoSnippet.Margin = new Padding(18, 8, 18, 8);
+            buttonNvoSnippet.Location = new Point(570, 11);
+            buttonNvoSnippet.Margin = new Padding(21, 11, 21, 11);
             buttonNvoSnippet.Name = "buttonNvoSnippet";
-            buttonNvoSnippet.Size = new Size(120, 68);
+            buttonNvoSnippet.Size = new Size(137, 90);
             buttonNvoSnippet.TabIndex = 2;
             buttonNvoSnippet.Text = "NuevoSnippet";
             buttonNvoSnippet.UseVisualStyleBackColor = false;
@@ -188,34 +194,20 @@
             labelLenguaje.Font = new Font("Segoe UI", 25F, FontStyle.Bold | FontStyle.Italic);
             labelLenguaje.Location = new Point(3, 0);
             labelLenguaje.Name = "labelLenguaje";
-            labelLenguaje.Size = new Size(474, 84);
+            labelLenguaje.Size = new Size(543, 112);
             labelLenguaje.TabIndex = 1;
             labelLenguaje.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // labelSinSeleccion
-            // 
-            labelSinSeleccion.Anchor = AnchorStyles.None;
-            labelSinSeleccion.AutoSize = true;
-            labelSinSeleccion.Font = new Font("Segoe UI", 30F, FontStyle.Italic);
-            labelSinSeleccion.ForeColor = Color.DimGray;
-            labelSinSeleccion.Location = new Point(160, 120);
-            labelSinSeleccion.Margin = new Padding(160, 120, 120, 120);
-            labelSinSeleccion.Name = "labelSinSeleccion";
-            labelSinSeleccion.Size = new Size(332, 108);
-            labelSinSeleccion.TabIndex = 0;
-            labelSinSeleccion.Text = "No hay lenguajes seleccionados...";
-            // 
             // FormPrincipal
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(18, 18, 18);
-            ClientSize = new Size(906, 595);
+            ClientSize = new Size(1035, 793);
             Controls.Add(tableLayoutPanelPrincipal);
             ForeColor = Color.FromArgb(230, 230, 230);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             Icon = (Icon)resources.GetObject("$this.Icon");
-            Margin = new Padding(3, 2, 3, 2);
             MaximizeBox = false;
             Name = "FormPrincipal";
             Text = "Snippet Centre";
