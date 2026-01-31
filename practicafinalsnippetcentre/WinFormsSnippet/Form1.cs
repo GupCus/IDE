@@ -7,6 +7,7 @@ namespace WinFormsSnippet
     {
         private Button? botonActual;
         private EventHandler? _handlerNvoSnippet;
+        private EventHandler? _handlerEditLabel;
         List<Lenguaje> Lenguajes { get; set; }
 
         // Colores para estado
@@ -59,6 +60,13 @@ namespace WinFormsSnippet
         {
             labelLenguaje.Text = lenguaje.Nombre;
 
+            if (_handlerEditLabel != null)
+            {
+                labelLenguaje.DoubleClick -= _handlerEditLabel;
+            }
+            _handlerEditLabel = (sender, e) => labelLenguaje_DoubleClick(sender, e, lenguaje);
+            labelLenguaje.DoubleClick += _handlerEditLabel;
+
             // Desuscribir el handler anterior si existe
             if (_handlerNvoSnippet != null)
             {
@@ -97,7 +105,6 @@ namespace WinFormsSnippet
                 {
                     var labelTitulo = new Label();
                     flowSnippets.Controls.Add(labelTitulo);
-                    flowSnippets.SetFlowBreak(labelTitulo, true);
                     labelTitulo.Anchor = AnchorStyles.None;
                     labelTitulo.AutoSize = true;
                     labelTitulo.Font = new Font("Segoe UI", 15F);
@@ -106,10 +113,24 @@ namespace WinFormsSnippet
                     labelTitulo.Text = snippet.Titulo;
                     labelTitulo.DoubleClick += label_DoubleClick;
 
+                    var botoneliminar = new Button
+                    {
+                        Text = "Eliminar",
+                        Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                        BackColor = Color.DarkRed,
+                        ForeColor = Color.White,
+                        FlatStyle = FlatStyle.Flat,
+                        Height = 25,
+                        Width = 70,
+                        Margin = new Padding(18, 8, 3, 4),
+                        Anchor = AnchorStyles.Right,
+                        Dock = DockStyle.Right,
+                    };
+                    flowSnippets.Controls.Add(botoneliminar);
                     var textBoxSnippet = new RichTextBox
                     {
                         Multiline = true,
-                        Width = 400,
+                        Width = 750,
                         Height = 100,
                         Margin = new Padding(3, 4, 3, 12),
                         Font = new Font("Consolas", 10),
@@ -122,7 +143,6 @@ namespace WinFormsSnippet
                     textBoxSnippet.BackColor = SystemColors.WindowFrame;
                     textBoxSnippet.Margin = new Padding(18, 2, 18, 2);
                     textBoxSnippet.Name = "textBoxSnippet";
-                    textBoxSnippet.Size = new Size(600, 91);
                     textBoxSnippet.Text = snippet.Codigo;
 
                 }
@@ -154,7 +174,7 @@ namespace WinFormsSnippet
 
         private void buttonNvaCat_Click(object sender, EventArgs e)
         {
-            Lenguajes.Add(new Lenguaje { Nombre = "JavaScript" });
+            Lenguajes.Add(new Lenguaje { Nombre = "Nuevo Lenguaje" });
             CargarSnippets();
         }
 
@@ -192,13 +212,13 @@ namespace WinFormsSnippet
                 // Insertar el TextBox en el mismo índice
                 flowSnippets.Controls.Add(textBox);
                 flowSnippets.Controls.SetChildIndex(textBox, indice);
-                flowSnippets.SetFlowBreak(textBox, true);
                 textBox.Focus();
                 textBox.SelectAll();
 
                 // Al perder foco, guardar y restaurar
                 textBox.LostFocus += (s, ev) =>
                 {
+
                     label.Text = textBox.Text;
                     label.Visible = true;
                     textBox.Dispose();
@@ -219,6 +239,66 @@ namespace WinFormsSnippet
                         textBox.Dispose();
                     }
                 };
+            }
+        }
+
+        private void labelLenguaje_DoubleClick(object sender, EventArgs e, Lenguaje l)
+        {
+            if (sender is Label label)
+            {
+
+                var textBox = new TextBox
+                {
+                    Text = label.Text,
+                    Font = label.Font,
+                    Size = label.Size,
+                    BorderStyle = BorderStyle.FixedSingle,
+                    Margin = label.Margin,
+                    ForeColor = label.ForeColor,
+                    BackColor = this.BackColor,
+                    Dock = label.Dock,
+                    TextAlign = HorizontalAlignment.Center,
+                    Anchor = label.Anchor
+                };
+
+                // Ocultar el label
+                label.Visible = false;
+
+                // Insertar el TextBox en el mismo índice
+                label.Parent?.Controls.Add(textBox);
+                textBox.Focus();
+                textBox.SelectAll();
+
+                // Al perder foco, guardar y restaurar
+                textBox.LostFocus += (s, ev) =>
+                {
+
+                    label.Text = textBox.Text;
+                    l.Nombre = textBox.Text;
+                    label.Visible = true;
+                    textBox.Dispose();
+                    CargarSnippets();
+                };
+
+                textBox.KeyDown += (s, ev) =>
+                {
+                    if (ev.KeyCode == Keys.Enter)
+                    {
+                        label.Text = textBox.Text;
+                        l.Nombre = textBox.Text;
+                        label.Visible = true;
+                        textBox.Dispose();
+                        ev.SuppressKeyPress = true;
+                        CargarSnippets();
+                    }
+                    else if (ev.KeyCode == Keys.Escape)
+                    {
+                        label.Visible = true;
+                        textBox.Dispose();
+                    }
+                };
+                
+
             }
         }
     }
