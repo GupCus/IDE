@@ -234,6 +234,7 @@
             MaximizeBox = false;
             Name = "FormPrincipal";
             Text = "Snippet Centre";
+            Load += FormPrincipal_Load;
             tableLayoutPanelPrincipal.ResumeLayout(false);
             tableLayoutPanelIzq.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();

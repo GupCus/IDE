@@ -1,6 +1,6 @@
 <Solution>
   <Project Path="Clases/Clases.csproj" />
-  <Project Path="Context/Context.csproj" Id="99484c69-9ec1-45a9-87bd-9bc114ab496f" />
+  <Project Path="Context/Context.csproj" Id="7c99bf8f-244d-4230-80f7-126c35d6736d" />
   <Project Path="proyectoAeroSnippet/proyectoAeroSnippet.csproj" />
   <Project Path="WinFormsSnippet/WinFormsSnippet.csproj" Id="dbda3c8c-b6ae-476c-83c8-3704278f2c0f" />
 </Solution>

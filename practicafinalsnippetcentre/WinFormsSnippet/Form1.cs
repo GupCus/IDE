@@ -1,4 +1,5 @@
 using Clases;
+using Context;
 using System.Collections.ObjectModel;
 
 namespace WinFormsSnippet
@@ -6,10 +7,9 @@ namespace WinFormsSnippet
     public partial class FormPrincipal : Form
     {
 
-    /* Definiciones */
+        /* Definiciones */
         private Button? botonActual;
-        List<Lenguaje> Lenguajes { get; set; }
-
+        List<Lenguaje> Lenguajes;
         //Handlers para eventos que hay que ir cambiando
         private EventHandler? _handlerNvoSnippet;
         private EventHandler? _handlerEditLabel;
@@ -21,25 +21,21 @@ namespace WinFormsSnippet
         private readonly Color _textoNormal = ColorTranslator.FromHtml("#E6E6E6");
         private readonly Color _textoDeshabilitado = ColorTranslator.FromHtml("#FFFFFF");
 
-    /* Metodos principales */
+        /* Metodos principales */
         public FormPrincipal()
         {
             InitializeComponent();
             buttonNvoSnippet.Visible = false;
-
-            //Carga lenguaje y snippets de ejemplo
-            Lenguajes = [new Lenguaje { Nombre = "C#" }, new Lenguaje { Nombre = "Python" }];
-            Lenguajes[0].Snippets.Add(new Snippet
-            {
-                Titulo = "Hola Mundo C#",
-                Codigo = "Console.WriteLine(\"Hola, Mundo!\");",
-            });
-
-            CargarSnippets();
+            
         }
-        private void CargarSnippets()
+        private async void FormPrincipal_Load(object sender, EventArgs e)
+        {
+            await CargarSnippets();
+        }
+        private async Task CargarSnippets()
         {
             panellenguajes.Controls.Clear();
+            Lenguajes = await LenguajeRepository.EncontrarLenguajesAsync();
             foreach (var lenguaje in Lenguajes)
             {
                 var boton = new Button
@@ -64,7 +60,7 @@ namespace WinFormsSnippet
 
         // Desuscribir el handler anterior si existe
         // Crear y guardar el nuevo handler
-        public void SetearLenguaje(Lenguaje lenguaje)
+        public async void SetearLenguaje(Lenguaje lenguaje)
         {
             labelLenguaje.Text = lenguaje.Nombre;
 
@@ -91,13 +87,14 @@ namespace WinFormsSnippet
             _handlerBorrarLenguaje = (sender, e) => btnEliminarLenguaje_Click(sender, e, lenguaje);
             btnEliminarLenguaje.Click += _handlerBorrarLenguaje;
 
-            MostrarSnippets(lenguaje);
+            await MostrarSnippets(lenguaje);
 
         }
 
-        public void MostrarSnippets(Lenguaje lenguaje)
+        public async Task MostrarSnippets(Lenguaje lenguaje)
         {
             flowSnippets.Controls.Clear();
+            lenguaje = await LenguajeRepository.EncontrarLenguajeAsync(lenguaje.Id);
             if (lenguaje.Snippets.Count == 0)
             {
                 var labelVacio = new Label
@@ -125,7 +122,7 @@ namespace WinFormsSnippet
                     labelTitulo.Margin = new Padding(18, 8, 3, 4);
                     labelTitulo.Size = new Size(65, 28);
                     labelTitulo.Text = snippet.Titulo;
-                    labelTitulo.DoubleClick += (s,e) => label_DoubleClick(s,e,lenguaje, snippet);
+                    labelTitulo.DoubleClick += (s, e) => label_DoubleClick(s, e, lenguaje, snippet);
 
                     var botoneliminar = new Button
                     {
@@ -194,7 +191,7 @@ namespace WinFormsSnippet
             }
         }
 
-    /* Eventos */
+        /* Eventos */
         private void botonLenguaje_Click(object sender, EventArgs e, Lenguaje l)
         {
             if (sender != botonActual)
@@ -211,23 +208,26 @@ namespace WinFormsSnippet
             }
         }
 
-        private void buttonNvaCat_Click(object sender, EventArgs e)
+        private async void buttonNvaCat_Click(object sender, EventArgs e)
         {
-            Lenguajes.Add(new Lenguaje { Nombre = "Nuevo Lenguaje" });
-            CargarSnippets();
+            await LenguajeRepository.CrearLenguajeAsync(new Lenguaje
+            {
+                Nombre = "Nuevo Lenguaje",
+            });
+            await CargarSnippets();
         }
 
-        private void buttonNvoSnippet_Click(object sender, EventArgs e, Lenguaje l)
+        private async void buttonNvoSnippet_Click(object sender, EventArgs e, Lenguaje l)
         {
-            l.Snippets.Add(new Snippet
+            await LenguajeRepository.CrearSnippetAsync(l.Id, new Snippet
             {
                 Titulo = "Nuevo Snippet",
                 Codigo = "// Escribe tu código aquí",
             });
-            MostrarSnippets(l);
+            await MostrarSnippets(l);
         }
 
-        private void label_DoubleClick(object sender, EventArgs e, Lenguaje l, Snippet snip)
+        private async void label_DoubleClick(object sender, EventArgs e, Lenguaje l, Snippet snip)
         {
             if (sender is Label label)
             {
@@ -255,22 +255,24 @@ namespace WinFormsSnippet
                 textBox.SelectAll();
 
                 // Al perder foco, guardar y restaurar
-                textBox.LostFocus += (s, ev) =>
+                textBox.LostFocus += async (s, ev) =>
                 {
                     label.Text = textBox.Text;
                     textBox.Dispose();
                     snip.Titulo = label.Text;
+                    await LenguajeRepository.ActualizarSnippetAsync(snip);
                     label.Visible = true;
-                    
+
                 };
 
-                textBox.KeyDown += (s, ev) =>
+                textBox.KeyDown += async (s, ev) =>
                 {
                     if (ev.KeyCode == Keys.Enter)
                     {
                         label.Text = textBox.Text;
                         textBox.Dispose();
                         snip.Titulo = label.Text;
+                        await LenguajeRepository.ActualizarSnippetAsync(snip);
                         label.Visible = true;
                         ev.SuppressKeyPress = true;
                     }
@@ -283,7 +285,7 @@ namespace WinFormsSnippet
             }
         }
 
-        private void labelLenguaje_DoubleClick(object sender, EventArgs e, Lenguaje l)
+        private async void labelLenguaje_DoubleClick(object sender, EventArgs e, Lenguaje l)
         {
             if (sender is Label label)
             {
@@ -311,17 +313,18 @@ namespace WinFormsSnippet
                 textBox.SelectAll();
 
                 // Al perder foco, guardar y restaurar
-                textBox.LostFocus += (s, ev) =>
+                textBox.LostFocus += async (s, ev) =>
                 {
 
                     label.Text = textBox.Text;
                     l.Nombre = textBox.Text;
                     label.Visible = true;
                     textBox.Dispose();
-                    CargarSnippets();
+                    await LenguajeRepository.ActualizarLenguajeAsync(l);
+                    await CargarSnippets();
                 };
 
-                textBox.KeyDown += (s, ev) =>
+                textBox.KeyDown += async (s, ev) =>
                 {
                     if (ev.KeyCode == Keys.Enter)
                     {
@@ -330,7 +333,8 @@ namespace WinFormsSnippet
                         label.Visible = true;
                         textBox.Dispose();
                         ev.SuppressKeyPress = true;
-                        CargarSnippets();
+                        await LenguajeRepository.ActualizarLenguajeAsync(l);
+                        
                     }
                     else if (ev.KeyCode == Keys.Escape)
                     {
@@ -343,17 +347,18 @@ namespace WinFormsSnippet
             }
         }
 
-        private void btnEliminarLenguaje_Click(object sender, EventArgs e, Lenguaje l)
+        private async void btnEliminarLenguaje_Click(object sender, EventArgs e, Lenguaje l)
         {
-            if(MessageBox.Show("Desea eliminar el lenguaje?", "Confirmar", MessageBoxButtons.OKCancel) == DialogResult.OK) { Lenguajes.Remove(l); }
-            CargarSnippets();
+            if (MessageBox.Show("Desea eliminar el lenguaje?", "Confirmar", MessageBoxButtons.OKCancel) == DialogResult.OK) { await LenguajeRepository.EliminarLenguajeAsync(l.Id); }
+            await CargarSnippets();
             DesactivarBoton();
         }
 
-        private void btnEliminarSnippet_Click(object sender, EventArgs e, Lenguaje l, Snippet s)
+        private async void btnEliminarSnippet_Click(object sender, EventArgs e, Lenguaje l, Snippet s)
         {
-            if (MessageBox.Show("Desea eliminar el snippet?", "Confirmar", MessageBoxButtons.OKCancel) == DialogResult.OK) { l.Snippets.Remove(s); }
-            MostrarSnippets(l);
+            if (MessageBox.Show("Desea eliminar el snippet?", "Confirmar", MessageBoxButtons.OKCancel) == DialogResult.OK) { await LenguajeRepository.EliminarSnippetAsync(l.Id,s.Id); }
+            await MostrarSnippets(l);
         }
+
     }
 }
