@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="Api/Barroso.Api.csproj" />
+  <Project Path="Barroso.Clases/Barroso.Clases.csproj" />
+  <Project Path="Barroso.Context/Barroso.Context.csproj" />
+  <Project Path="Barroso.DTOs/Barroso.DTOs.csproj" />
+  <Project Path="Barroso.Negocio/Barroso.Negocio.csproj" Id="6aeceefe-23a1-419e-8701-ff7948826eef" />
+  <Project Path="Barroso.Presentacion/Barroso.Presentacion.csproj" Id="ab8bf212-d82c-4b07-85a0-1713531d52d4" />
+</Solution>

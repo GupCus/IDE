@@ -1,3 +1,6 @@
 [submodule "ProyectoSnippetCentre"]
 	path = ProyectoSnippetCentre
 	url = https://github.com/GupCus/snippetcentre.git
+[submodule "TpRegularidad"]
+	path = TpRegularidad
+	url = https://github.com/GupCus/tpNET.git
